@@ -1,35 +1,67 @@
-<DOCTYPE html>
-    <html>
+<!DOCTYPE html>
+<html>
 <head>
-    <meta charset="utf-11">
+    <meta charset="utf-8">
     <title>Login</title>
-        <style>
-            .center {
-                text-align: center;
-                color: #333333;
-                font-family: verdana;
-                background-color:#fd8967;
-                padding: 26px;
-                font-size: 26px;
-            }
-        </style>
+<style>
+  .center {
+    text-align: center;
+    color: black;
+    font-family: helvetica;
+    background-color:#fd8967;
+    padding: 40px;
+    font-size: 60px;
+  }
+
+</style>
 </head>
 <body link = "blue" alink = "blue" vlink = "blue">
-     <style>
-        body {
-            background-color:#fd8967; 
-        }
-      </style>
-    <h1 class = "center">Login</h1>
-    <form method="post">
+  <style>
+
+    body {
+      background-color:#fd8967; 
+    }
+    
+    #image {
+      position: absolute;
+      top: 25%;
+      left: 10%; 
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    .border-wrapper {
+      width: 100vw; 
+      height: 100vh;
+      box-sizing: border-box; 
+      border: 20px solid black; 
+      overflow: auto; 
+    }
+    .content {
+      padding: 20px; 
+    }  
+  </style>
+  <div class="border-wrapper">
+  <div class="content">
+
+    <h1 class="center"><u>Welcome Back! :]</u></h1>
+    <form method="post" action="/register">
         <div style = "text-align:center"><input type="text" placeholder="Username" name="username"></div>
         <p></p>
         <div style = "text-align:center"><input type="password" placeholder="Password" name ='password'></div>
         <p></p>
         <div style = "text-align:center"><input type="submit" value='Login' id="Login"></div>
-        <p></p>
-        <div style = "text-align:center">New User? <a style = "text-decoration:none" href = "register">Register Now</a></div>
-    </form>
+        <div class = "center" style = "font-size:22px">New User? <a style = "text-decoration:none" href = "register">Register Now</a></div>
+    <img src = "{{url_for('static', filename='rutgersimg.png')}}" style = "margin-left:30px;" height = "400" width = "600" alt = "Rutgers logo"/>
+   
+    <img src = "{{url_for('static', filename='rah.gif')}}" align = "right" style = "margin-right:220px" height = "400" width = "300" alt = "Rutgers logo"/>
+  </form>
+
+</div> </div>
 </body>
 </html>
 </DOCTYPE>
