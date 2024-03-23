@@ -1,15 +1,15 @@
-from flask import Flask, flash, redirect, render_template, request, session
-from flask.helpers import get_flashed_messages
-from flask_session import Session
-from helper import login_required
-from tempfile import mkdtemp
-from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-from werkzeug.security import check_password_hash, generate_password_hash
-from bs4 import BeautifulSoup
-import os
+from flask import Flask, render_template, request, redirect, url_for, session,flash
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 import sqlite3
+import json
+from flask_session import Session
+from tempfile import mkdtemp
+from helper import login_required
 
-# Configure application
+con = sqlite3.connect('sweat.db')
+cur = con.cursor()
+
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
