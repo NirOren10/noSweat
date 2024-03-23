@@ -36,12 +36,12 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        print()
         username = request.form['username']
         password = request.form['password']
-        user = users_collection.find_one({'username': username, 'password': password})
+        user = users_collection.find_one({'name': username, 'password': password})
         if user:
             session['username'] = username
+            print("LOGIN SUCCESSFUL!")
             return redirect(url_for('home'))
         else:
             return 'Invalid username or password'
@@ -58,8 +58,9 @@ def logout():
 def home():
     if not is_logged_in():
         return redirect(url_for('login'))
-    user = users_collection.find_one({'username': session['username']})
-    followed_users = user.get('following', [])
+    user = users_collection.find_one({'name': session['username']})
+    followed_users = user["following"]
+    print(followed_users)
     posts = posts_collection.find({'username': {'$in': followed_users}})
     return render_template('index.html', posts=posts)
 
