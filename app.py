@@ -136,7 +136,7 @@ def register():
             )
             # Insert the new user
             print('preadd')
-            db.execute("INSERT INTO users VALUES(?, ?, ?, ?, ?)",(len(users),username,hash,'following: []',gym))
+            db.execute("INSERT INTO users VALUES(?, ?, ?, ?, ?)",(len(users),username,hash,'[]',gym))
             con.commit()
             print('added')
             # Redirect user to home page
@@ -158,8 +158,8 @@ def post():
         comments = request.form.get('comments')
         users_db = list(db.execute("SELECT * FROM users").fetchall())
         current_user = [i for i in users_db if i[0] == session['user_id']][0]
-
-        db.execute("INSERT INTO posts(userid,content,details,gym) VALUES(?,?,?,?)",(session['user_id'],wrkt_name,json.dumps({"reps":reps,"comments" : comments}),current_user['gym']))
+        print(current_user)
+        db.execute("INSERT INTO posts(userid,content,details,gym) VALUES(?,?,?,?)",(session['user_id'],wrkt_name,json.dumps({"reps":reps,"comments" : comments}),current_user[-1]))
         con.commit()
         return redirect('/')
     else:
@@ -183,14 +183,14 @@ def index():
                 "userid": row[0],
                 "name": row[1],
                 "password": row[2],
-                "following": row[3],
+                "following": (row[3][11:]),
                 "gym": row[4]
                 }
             users.append(user_dict)
         
         current_user = [i for i in users if i['userid'] == session['user_id']][0]
-
-        posts_ls = list(db.execute("SELECT * FROM users").fetchall())
+        print(current_user)
+        posts_ls = list(db.execute("SELECT * FROM posts").fetchall())
         posts = []
         for row in posts_ls:
             posts_dict = {
@@ -205,8 +205,9 @@ def index():
         relevant_posts = []
 
         for post in posts:
-            if post['userid'] in current_user['following']:
-                relevant_posts.append(post)
+            print(post)
+            # if str(post['userid']) in current_user['following']:
+            #     relevant_posts.append(post)
             if post['gym'] == current_user['gym']:
                 relevant_posts.append(post)
         
