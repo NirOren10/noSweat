@@ -57,7 +57,7 @@ def home():
     user = users_collection.find_one({'username': session['username']})
     followed_users = user.get('following', [])
     posts = posts_collection.find({'username': {'$in': followed_users}})
-    return render_template('home.html', posts=posts)
+    return render_template('index.html', posts=posts)
 
 # Post route
 @app.route('/post', methods=['POST'])
