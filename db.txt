@@ -1,5 +1,5 @@
 USERS
-- _id
+- userid
 - name
 - password
 - following
@@ -7,7 +7,7 @@ USERS
 
 
 POSTS
-- _id
+- postid
 - userID
 - content - {"type" : excercise, "duration" : ......}
 - caption
