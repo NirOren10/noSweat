@@ -37,10 +37,7 @@ Session(app)
 con = sqlite3.connect("sweat.db",check_same_thread=False)
 db = con.cursor()
 
-@app.route("/", methods=["GET", "POST"])
-@login_required
-def index():
-        return render_template("index.html")
+
     
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -162,6 +159,53 @@ def post():
     return redirect('/')
 
 
+
+@app.route("/", methods=["GET", "POST"])
+@login_required
+def index():
+    con = sqlite3.connect("sweat.db",check_same_thread=False)
+    db = con.cursor()
+    """Log user in"""
+    if request.method == "GET":
+        users_db = list(db.execute("SELECT * FROM users").fetchall())
+
+        users = []
+
+        for row in users_db:
+            user_dict = {
+                "userid": row[0],
+                "name": row[1],
+                "password": row[2],
+                "following": row[3],
+                "gym": row[4]
+                }
+            users.append(user_dict)
+        
+        current_user = [i for i in users if i['userid'] == session['user_id']][0]
+
+        posts_ls = list(db.execute("SELECT * FROM users").fetchall())
+        posts = []
+        for row in posts_ls:
+            posts_dict = {
+                "postid": row[0],
+                "userid": row[1],
+                "content": row[2],
+                "details": row[3],
+                "gym": row[4]
+                }
+            posts.append(posts_dict)
+        
+        relevant_posts = []
+
+        for post in posts:
+            if post['id'] in current_user['following']:
+                relevant_posts.append(post)
+            if post['gym'] == current_user['gym']:
+                relevant_posts.append(post)
+        
+        return relevant_posts
+    else:
+        return render_template("index.html")
 
 if __name__ == "__main__":
     app.run()
