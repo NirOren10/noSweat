@@ -106,8 +106,8 @@ def register():
         confirmation = request.form.get("confirm")
 
         rows = db.execute("SELECT * FROM users WHERE name = '{}'".format(username)).fetchall()
-        users = db.execute("SELECT * FROM users WHERE name = '{}'".format(request.form.get("username"))).fetchall()
-
+        users = db.execute("SELECT * FROM users").fetchall()
+        print(users)
         # Ensure the username was submitted
         if not username:
             flash("Please provide username")
