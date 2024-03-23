@@ -198,14 +198,14 @@ def index():
         relevant_posts = []
 
         for post in posts:
-            if post['id'] in current_user['following']:
+            if post['userid'] in current_user['following']:
                 relevant_posts.append(post)
             if post['gym'] == current_user['gym']:
                 relevant_posts.append(post)
         
-        return relevant_posts
+        return render_template("index.html",posts=relevant_posts)
     else:
-        return render_template("index.html")
+        return render_template("index.html",posts=relevant_posts)
 
 if __name__ == "__main__":
     app.run()
