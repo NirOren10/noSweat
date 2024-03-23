@@ -37,10 +37,7 @@ Session(app)
 con = sqlite3.connect("sweat.db",check_same_thread=False)
 db = con.cursor()
 
-@app.route("/", methods=["GET", "POST"])
-@login_required
-def index():
-        return render_template("index.html")
+
     
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -139,7 +136,7 @@ def register():
             )
             # Insert the new user
             print('preadd')
-            db.execute("INSERT INTO users VALUES(?, ?, ?, ?, ?)",(len(users),username,hash,'following: []',gym))
+            db.execute("INSERT INTO users VALUES(?, ?, ?, ?, ?)",(len(users),username,hash,'[]',gym))
             con.commit()
             print('added')
             # Redirect user to home page
@@ -148,6 +145,75 @@ def register():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
+
+@app.route('/post',methods=['POST','GET'])
+@login_required
+def post():
+    if request.method == "POST":
+        con = sqlite3.connect('sweat.db')
+        db = con.cursor()
+        title = request.form.get("title")
+        wrkt_name = request.form.get('wrkt_name')
+        reps = request.form.get('reps')
+        comments = request.form.get('comments')
+        users_db = list(db.execute("SELECT * FROM users").fetchall())
+        current_user = [i for i in users_db if i[0] == session['user_id']][0]
+        print(current_user)
+        db.execute("INSERT INTO posts(userid,content,details,gym) VALUES(?,?,?,?)",(session['user_id'],wrkt_name,json.dumps({"reps":reps,"comments" : comments}),current_user[-1]))
+        con.commit()
+        return redirect('/')
+    else:
+        return render_template("post.html")
+
+
+
+@app.route("/", methods=["GET", "POST"])
+@login_required
+def index():
+    con = sqlite3.connect("sweat.db",check_same_thread=False)
+    db = con.cursor()
+    """Log user in"""
+    if request.method == "GET":
+        users_db = list(db.execute("SELECT * FROM users").fetchall())
+
+        users = []
+
+        for row in users_db:
+            user_dict = {
+                "userid": row[0],
+                "name": row[1],
+                "password": row[2],
+                "following": (row[3][11:]),
+                "gym": row[4]
+                }
+            users.append(user_dict)
+        
+        current_user = [i for i in users if i['userid'] == session['user_id']][0]
+        print(current_user)
+        posts_ls = list(db.execute("SELECT * FROM posts").fetchall())
+        posts = []
+        for row in posts_ls:
+            posts_dict = {
+                "postid": row[0],
+                "userid": row[1],
+                "content": row[2],
+                "details": row[3],
+                "gym": row[4]
+                }
+            posts.append(posts_dict)
+        
+        relevant_posts = []
+
+        for post in posts:
+            print(post)
+            # if str(post['userid']) in current_user['following']:
+            #     relevant_posts.append(post)
+            if post['gym'] == current_user['gym']:
+                relevant_posts.append(post)
+        
+        return render_template("index.html",posts=relevant_posts)
+    else:
+        return render_template("index.html",posts=relevant_posts)
 
 if __name__ == "__main__":
     app.run()

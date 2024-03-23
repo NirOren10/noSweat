@@ -12,9 +12,7 @@
     <div>
         {% for post in posts %}
         <div>
-            <img src="{{ post.content }}" alt="Image">
-            <p>{{ post.subtitle }}</p>
-            <p>{{ post.post_id }}</p>
+            {{post}}
         </div>
         {% endfor %}
     </div>

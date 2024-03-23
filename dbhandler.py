@@ -1,8 +1,14 @@
 import sqlite3
+import json
 
 con = sqlite3.connect('sweat.db')
 cur = con.cursor()
 #cur.execute("CREATE TABLE users(userid INTEGER PRIMARY KEY AUTOINCREMENT, name TINYTEXT, hash TINYTEXT, following TEXT, gym TINYTEXT)")
-#cur.execute("CREATE TABLE posts(postid int, userid int, content IMAGE, details TEXT, gym TINYTEXT)")
-#cur.execute("DROP TABLE users")
+#cur.execute("CREATE TABLE posts(postid INTEGER PRIMARY KEY AUTOINCREMENT, userid int, content TINYTEXT, details TEXT, gym TINYTEXT)")
+#cur.execute("DROP TABLE posts")
+#cur.execute("DELETE FROM users")
+#a = cur.execute('SELECT * FROM users').fetchall()
+#cur.execute("INSERT INTO posts() VALUES()")
 con.commit()
+print("Done")
+print('\n\n\n')
