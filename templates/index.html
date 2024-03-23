@@ -7,14 +7,38 @@
     <title>Home</title>
 </head>
 <body>
+    <style>
+        .table-td{
+            background-color: lightgrey;
+            color: darkred;
+        }
+        .post-body{
+            background-color: grey;
+        }
+    </style>
     <h1>Welcome to the Home Page</h1>
     
     <div>
+        <table>
         {% for post in posts %}
-        <div>
-            {{post}}
-        </div>
+        <tr>
+            <td style="border: solid 2px black">
+                <table>
+                    <tr><td class="table-td"><p>{{post.user_name}}</p></td></tr>
+                    <tr><td class="table-td">
+                        <p>Activity: {{post.content}}</p>
+                        <p>Reps/Distance: {{post.details['reps']}}</p>
+                        <p>Additional Comments: {{post.details['comments']}}</p>
+
+                    </td></tr>
+                    
+                </table>
+
+
+            </td>
+        <tr>
         {% endfor %}
+        <table>
     </div>
     
     <a href="{{ url_for('logout') }}">Logout</a>

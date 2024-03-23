@@ -197,8 +197,9 @@ def index():
                 "postid": row[0],
                 "userid": row[1],
                 "content": row[2],
-                "details": row[3],
-                "gym": row[4]
+                "details": json.loads(row[3]),
+                "gym": row[4],
+                "user_name" : [i for i in users if i['userid'] == row[1]][0]['name']
                 }
             posts.append(posts_dict)
         
