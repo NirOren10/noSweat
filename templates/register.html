@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-11">
+    <meta charset="utf-8">
     <title>Register</title>
 <style>
   .center {
     text-align: center;
-    color: #333333;
+    color: black;
     font-family: verdana;
-    background-color:#e6f2ff;
-    padding: 26px;
-    font-size: 26px;
+    background-color:#fd8967;
+    padding: 30px;
+    font-size: 24px;
   }
 </style>
 </head>
@@ -18,22 +18,29 @@
   <style>
 
     body {
-      background-color:#e6f2ff; 
+      background-color:#fd8967; 
     }
     
+    #image {
+      position: absolute;
+      top: 25%;
+      left: 10%; 
+    }
 
 
   </style>
     <h1 class="center">Sign up Now!</h1>
     <form method="post">
-        <div style = "text-align:center"> <input type="text" placeholder="Username" id="username"></div>
+        <div style = "text-align:right"> <input type="text" placeholder="Username" id="username"></div>
         <p></p>
-        <div style = "text-align:center"><input type="password" placeholder="Password" id ='password'></div>
+        <div style = "text-align:right"><input type="password" placeholder="Password" id ='password'></div>
         <div><p></p></div>
-        <div style = "text-align:center"><input type="password" placeholder="Confirm Password" id="confirm"></div>
+        <div style = "text-align:right"><input type="password" placeholder="Confirm Password" id="confirm"></div>
         <p></p>
-        <div style = "text-align:center"><input type="submit" value='Register' id="register"></div>
-    </form>
+        <div style = "text-align:right"><input type="submit" value='Register' id="register"></div>
+        <p> </p>
+        <img src="rutgersimg.png" alt="" width="300" height="200" title="Rutgers Logo">
+      </form>
 
 </body>
 </html>
