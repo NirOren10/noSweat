@@ -15,6 +15,7 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -23,77 +24,130 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+
 # Configure session to use filesystem (instead of signed cookies)
 app.config["SESSION_FILE_DIR"] = mkdtemp()
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# Register route
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        gym = request.form['gym']
-        print(username,password)
-        # Check if username already exists
-        userlist = cur.execute('SELECT name FROM users').fetchall()
-        if username in (userlist):
-            return 'Username already exists!'
-        else:
-            print("----NEW USER")
-            cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?)',(len(userlist),username,password,'',gym))
-            con.commit()
-            #users_collection.insert_one({'name': username, 'password': password, 'following': []})
-            return redirect(url_for('login'))
-    return render_template('register.html')
+# Configure DB
+con = sqlite3.connect("sweat.db")
+db = con.cursor()
 
-# Login route
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = cur.execute('SELECT username,password FROM users WHERE username=? AND password=?',(username,password)).fetchone()#users_collection.find_one({'name': username, 'password': password})
-        if len(user)!=0:
-            session['username'] = username
-            print("LOGIN SUCCESSFUL!")
-            return redirect(url_for('home'))
-        else:
-            return 'Invalid username or password'
-    return render_template('login.html')
-
-# Logout route
-@app.route('/logout')
-@login_required
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
-
-# Home route
-@app.route('/')
+@app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    user = cur.execute("SELECT name FROM users WHERE ")
-    # if not is_logged_in():
-    #     return redirect(url_for('login'))
-    # user = users_collection.find_one({'name': session['username']})
-    # followed_users = user["following"]
-    # print(followed_users)
-    # posts = posts_collection.find({'username': {'$in': followed_users}})
-    return render_template('index.html', posts=posts)
+        return render_template("index.html")
+    
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Log user in"""
 
-# Post route
-@app.route('/post', methods=['POST'])
-def post():
-    if not is_logged_in():
-        return redirect(url_for('login'))
-    username = session['username']
-    content = request.form['content']
-    posts_collection.insert_one({'username': username, 'content': content})
-    return redirect(url_for('home'))
+    # Forget any user_id
+    session.clear()
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
 
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            flash("Please provide username")
+            return render_template("login.html")
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            flash("Please provide password")
+            return render_template("login.html")
+        # Query database for username
+        users = db.execute("SELECT * FROM users WHERE name = ?", request.form.get("username")).fetchall()
+
+        # Ensure username exists and password is correct
+        if len(users) != 1 or not check_password_hash(
+            users[0]["hash"], request.form.get("password")
+        ):
+            flash("Incorrect username or password")
+            return render_template("login.html")
+
+        # Remember which user has logged in
+        session["user_id"] = users[0]["id"]
+
+        # Redirect user to home page
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
+
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        gym = request.form.get("gym")
+        confirmation = request.form.get("confirm")
+
+        rows = db.execute("SELECT * FROM users WHERE name = ?", username).fetchall()
+        users = db.execute("SELECT * FROM users WHERE name = ?", request.form.get("username")).fetchall()
+
+        # Ensure the username was submitted
+        if not username:
+            flash("Please provide username")
+            return render_template("register.html")
+        # Ensure the username doesn't exists
+        elif len(rows) != 0:
+            flash("Username already exists")
+            return render_template("register.html")
+
+        # Ensure password was submitted
+        elif not password:
+            flash("Please provide password")
+            return render_template("register.html")
+
+        # Ensure confirmation password was submitted
+        elif not request.form.get("confirm"):
+            flash("Please confirm password")
+            return render_template("register.html")
+
+        # Ensure passwords match
+        elif not password == confirmation:
+            flash("Password does not match confirmation")
+            return render_template("register.html")
+
+        else:
+            # Generate the hash of the password
+            hash = generate_password_hash(
+                password, method="pbkdf2:sha256", salt_length=8
+            )
+            # Insert the new user
+            db.execute("INSERT INTO users VALUES(?, ?, ?, ?, ?)",(len(users),username,hash,'following: []',gym))
+            con.commit()
+            # Redirect user to home page
+            return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("register.html")
+
+def errorhandler(e):
+    """Handle error"""
+    if not isinstance(e, HTTPException):
+        e = InternalServerError()
+    return redirect("/")
+
+
+# Listen for errors
+for code in default_exceptions:
+    app.errorhandler(code)(errorhandler)
