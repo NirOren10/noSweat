@@ -6,8 +6,8 @@ app = Flask(__name__)
 app.secret_key = 'DaXP9BxbuasMaqkS'
 
 # MongoDB setup
-client = MongoClient('mongodb+srv://no186:<password>@cluster0.zpcgbey.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-db = client['flask_social_network']
+client = MongoClient('mongodb+srv://no186:DaXP9BxbuasMaqkS@cluster0.zpcgbey.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+db = client['NoSweat']
 users_collection = db['users']
 posts_collection = db['posts']
 
@@ -19,13 +19,16 @@ def is_logged_in():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        print("AHAHAHA")
         username = request.form['username']
         password = request.form['password']
+        print(username,password)
         # Check if username already exists
-        if users_collection.find_one({'username': username}):
+        if users_collection.find_one({'name': username}):
             return 'Username already exists!'
         else:
-            users_collection.insert_one({'username': username, 'password': password, 'following': []})
+            print("----NEW USER")
+            users_collection.insert_one({'name': username, 'password': password, 'following': []})
             return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -35,9 +38,10 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = users_collection.find_one({'username': username, 'password': password})
+        user = users_collection.find_one({'name': username, 'password': password})
         if user:
             session['username'] = username
+            print("LOGIN SUCCESSFUL!")
             return redirect(url_for('home'))
         else:
             return 'Invalid username or password'
@@ -54,8 +58,9 @@ def logout():
 def home():
     if not is_logged_in():
         return redirect(url_for('login'))
-    user = users_collection.find_one({'username': session['username']})
-    followed_users = user.get('following', [])
+    user = users_collection.find_one({'name': session['username']})
+    followed_users = user["following"]
+    print(followed_users)
     posts = posts_collection.find({'username': {'$in': followed_users}})
     return render_template('index.html', posts=posts)
 

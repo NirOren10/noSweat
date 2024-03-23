@@ -1,0 +1,12 @@
+USERS
+- _id
+- name
+- password
+- following
+
+
+POSTS
+- _id
+- userID
+- content
+- 
