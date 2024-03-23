@@ -3,10 +3,20 @@ USERS
 - name
 - password
 - following
+- gym
 
 
 POSTS
 - _id
 - userID
-- content
-- 
+- content - {"type" : excercise, "duration" : ......}
+- caption
+- gym-tag
+
+
+
+
+
+
+
+
