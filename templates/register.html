@@ -26,31 +26,22 @@
       top: 25%;
       left: 10%; 
     }
-
+    
 
   </style>
     <h1 class="center">Sign up Now!</h1>
     <form method="post">
-<<<<<<< HEAD
-        <div style = "text-align:right"> <input type="text" placeholder="Username" id="username"></div>
+        <div style = "text-align:center"> <input type="text" placeholder="Username" id="username" required></div>
         <p></p>
-        <div style = "text-align:right"><input type="password" placeholder="Password" id ='password'></div>
-=======
-        <div style = "text-align:center"> <input type="text" placeholder="Username" name="username"></div>
-        <p></p>
-        <div style = "text-align:center"><input type="password" placeholder="Password" name ='password'></div>
->>>>>>> 3762651cc7a921db3c1b849ce691fdca2f7970c9
+        <div style = "text-align:center"><input type="password" placeholder="Password" id ='password' required></div>
         <div><p></p></div>
-        <div style = "text-align:right"><input type="password" placeholder="Confirm Password" id="confirm"></div>
+        <div style = "text-align:center"><input type="password" placeholder="Confirm Password" id="confirm" required></div>
         <p></p>
-        <div style = "text-align:right"><input type="submit" value='Register' id="register"></div>
-        <p> </p>
         <img src="rutgersimg.png" alt="" width="300" height="200" title="Rutgers Logo">
       </form>
-
-        <input type="password" placeholder="Confirm Password" name="confirm">
+      <div style = "text-align:center"> 
         <div><p></p></div>
-        <select id="gyms" name="gym">
+        <select id="gyms" name="gym" required>
             <option value="Busch">Busch</option>
             <option value="Livi">Livi</option>
             <option value="College Ave">College Ave</option>
@@ -61,7 +52,8 @@
         </select>
           
         <input type="submit" value='Register' name="register">
-    </form>
+      </div style>
+      </form>
 
 
 </body>

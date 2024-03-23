@@ -141,13 +141,13 @@ def register():
     else:
         return render_template("register.html")
 
-def errorhandler(e):
-    """Handle error"""
-    if not isinstance(e, HTTPException):
-        e = InternalServerError()
-    return redirect("/")
+if __name__ == "__main__":
+    app.run()
+#     if not isinstance(e, HTTPException):
+#         e = InternalServerError()
+#     return redirect("/")
 
 
-# Listen for errors
-for code in default_exceptions:
-    app.errorhandler(code)(errorhandler)
+# # Listen for errors
+# for code in default_exceptions:
+#     app.errorhandler(code)(errorhandler)
