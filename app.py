@@ -3,10 +3,10 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'
+app.secret_key = 'DaXP9BxbuasMaqkS'
 
 # MongoDB setup
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient('mongodb+srv://no186:<password>@cluster0.zpcgbey.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 db = client['flask_social_network']
 users_collection = db['users']
 posts_collection = db['posts']
