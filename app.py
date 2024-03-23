@@ -147,16 +147,23 @@ def register():
         return render_template("register.html")
 
 @app.route('/post',methods=['POST','GET'])
+@login_required
 def post():
-    con = sqlite3.connect('sweat.db')
-    db = con.cursor()
-    title = request.form.get("title")
-    wrkt_name = request.form.get('wrkt_name')
-    reps = request.form.get('reps')
-    comments = request.form.get('comments')
-    db.execute("INSERT INTO posts(userid,content,details,gym) VALUES(?,?,?,?)",(session['user_id'],title,wrkt_name,reps,comments))
-    con.commit()
-    return redirect('/')
+    if request.method == "POST":
+        con = sqlite3.connect('sweat.db')
+        db = con.cursor()
+        title = request.form.get("title")
+        wrkt_name = request.form.get('wrkt_name')
+        reps = request.form.get('reps')
+        comments = request.form.get('comments')
+        users_db = list(db.execute("SELECT * FROM users").fetchall())
+        current_user = [i for i in users_db if i[0] == session['user_id']][0]
+
+        db.execute("INSERT INTO posts(userid,content,details,gym) VALUES(?,?,?,?)",(session['user_id'],wrkt_name,json.dumps({"reps":reps,"comments" : comments}),current_user['gym']))
+        con.commit()
+        return redirect('/')
+    else:
+        return render_template("post.html")
 
 
 
