@@ -1,8 +1,24 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
-    Home Page
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
 </head>
 <body>
-    Home Page
+    <h1>Welcome to the Home Page</h1>
+    
+    <div>
+        {% for post in posts %}
+        <div>
+            <img src="{{ post.content }}" alt="Image">
+            <p>{{ post.subtitle }}</p>
+            <p>{{ post.post_id }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <a href="{{ url_for('logout') }}">Logout</a>
 </body>
-</DOCTYPE>
+</html>
