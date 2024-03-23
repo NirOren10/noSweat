@@ -149,6 +149,20 @@ def register():
     else:
         return render_template("register.html")
 
+@app.route('/post',methods=['POST','GET'])
+def post():
+    con = sqlite3.connect('sweat.db')
+    db = con.cursor()
+    title = request.form.get("title")
+    wrkt_name = request.form.get('wrkt_name')
+    reps = request.form.get('reps')
+    comments = request.form.get('comments')
+    db.execute("INSERT INTO posts(userid,content,details,gym) VALUES(?,?,?,?)",(session['user_id'],title,wrkt_name,reps,comments))
+    con.commit()
+    return redirect('/')
+
+
+
 if __name__ == "__main__":
     app.run()
 #     if not isinstance(e, HTTPException):
