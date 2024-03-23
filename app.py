@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session,flash
-from pymongo import MongoClient
-from bson.objectid import ObjectId
 import sqlite3
 import json
 from flask_session import Session
 from tempfile import mkdtemp
-from helper import login_required
+# from helper import login_required
 
 con = sqlite3.connect('sweat.db')
 cur = con.cursor()
