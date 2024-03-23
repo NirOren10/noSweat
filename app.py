@@ -3,6 +3,8 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import sqlite3
 import json
+from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from werkzeug.security import check_password_hash, generate_password_hash
 from flask_session import Session
 from tempfile import mkdtemp
 from helper import login_required
@@ -32,7 +34,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure DB
-con = sqlite3.connect("sweat.db")
+con = sqlite3.connect("sweat.db",check_same_thread=False)
 db = con.cursor()
 
 @app.route("/", methods=["GET", "POST"])
@@ -42,6 +44,8 @@ def index():
     
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    con = sqlite3.connect("sweat.db",check_same_thread=False)
+    db = con.cursor()
     """Log user in"""
 
     # Forget any user_id
@@ -60,17 +64,17 @@ def login():
             flash("Please provide password")
             return render_template("login.html")
         # Query database for username
-        users = db.execute("SELECT * FROM users WHERE name = ?", request.form.get("username")).fetchall()
-
+        users = db.execute("SELECT * FROM users WHERE name = '{}'".format(request.form.get("username"))).fetchall()
+        print(users)
         # Ensure username exists and password is correct
         if len(users) != 1 or not check_password_hash(
-            users[0]["hash"], request.form.get("password")
+            users[0][2], request.form.get("password")
         ):
             flash("Incorrect username or password")
             return render_template("login.html")
 
         # Remember which user has logged in
-        session["user_id"] = users[0]["id"]
+        session["user_id"] = users[0][0]
 
         # Redirect user to home page
         return redirect("/")
@@ -93,14 +97,16 @@ def logout():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    con = sqlite3.connect("sweat.db",check_same_thread=False)
+    db = con.cursor()
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
         gym = request.form.get("gym")
         confirmation = request.form.get("confirm")
 
-        rows = db.execute("SELECT * FROM users WHERE name = ?", username).fetchall()
-        users = db.execute("SELECT * FROM users WHERE name = ?", request.form.get("username")).fetchall()
+        rows = db.execute("SELECT * FROM users WHERE name = '{}'".format(username)).fetchall()
+        users = db.execute("SELECT * FROM users WHERE name = '{}'".format(request.form.get("username"))).fetchall()
 
         # Ensure the username was submitted
         if not username:
@@ -132,8 +138,10 @@ def register():
                 password, method="pbkdf2:sha256", salt_length=8
             )
             # Insert the new user
+            print('preadd')
             db.execute("INSERT INTO users VALUES(?, ?, ?, ?, ?)",(len(users),username,hash,'following: []',gym))
             con.commit()
+            print('added')
             # Redirect user to home page
             return redirect("/")
 
