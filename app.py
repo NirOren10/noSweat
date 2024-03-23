@@ -1,34 +1,51 @@
 from flask import Flask, render_template, request, redirect, url_for, session,flash
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import sqlite3
+import json
+from flask_session import Session
+from tempfile import mkdtemp
+from helper import login_required
+
+con = sqlite3.connect('sweat.db')
+cur = con.cursor()
 
 app = Flask(__name__)
-app.secret_key = 'DaXP9BxbuasMaqkS'
 
-# MongoDB setup
-client = MongoClient('mongodb+srv://no186:DaXP9BxbuasMaqkS@cluster0.zpcgbey.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-db = client['NoSweat']
-users_collection = db['users']
-posts_collection = db['posts']
+# Ensure templates are auto-reloaded
+app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-# Check if user is logged in
-def is_logged_in():
-    return 'username' in session
+# Ensure responses aren't cached
+@app.after_request
+def after_request(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
+
+# Configure session to use filesystem (instead of signed cookies)
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
 
 # Register route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        print("AHAHAHA")
         username = request.form['username']
         password = request.form['password']
+        gym = request.form['gym']
         print(username,password)
         # Check if username already exists
-        if users_collection.find_one({'name': username}):
+        userlist = cur.execute('SELECT name FROM users').fetchall()
+        if username in (userlist):
             return 'Username already exists!'
         else:
             print("----NEW USER")
-            users_collection.insert_one({'name': username, 'password': password, 'following': []})
+            cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?)',(len(userlist),username,password,'',gym))
+            con.commit()
+            #users_collection.insert_one({'name': username, 'password': password, 'following': []})
             return redirect(url_for('login'))
     return render_template('register.html')
 
@@ -38,8 +55,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = users_collection.find_one({'name': username, 'password': password})
-        if user:
+        user = cur.execute('SELECT username,password FROM users WHERE username=? AND password=?',(username,password)).fetchone()#users_collection.find_one({'name': username, 'password': password})
+        if len(user)!=0:
             session['username'] = username
             print("LOGIN SUCCESSFUL!")
             return redirect(url_for('home'))
@@ -49,19 +66,22 @@ def login():
 
 # Logout route
 @app.route('/logout')
+@login_required
 def logout():
     session.clear()
     return redirect(url_for('login'))
 
 # Home route
 @app.route('/')
-def home():
-    if not is_logged_in():
-        return redirect(url_for('login'))
-    user = users_collection.find_one({'name': session['username']})
-    followed_users = user["following"]
-    print(followed_users)
-    posts = posts_collection.find({'username': {'$in': followed_users}})
+@login_required
+def index():
+    user = cur.execute("SELECT name FROM users WHERE ")
+    # if not is_logged_in():
+    #     return redirect(url_for('login'))
+    # user = users_collection.find_one({'name': session['username']})
+    # followed_users = user["following"]
+    # print(followed_users)
+    # posts = posts_collection.find({'username': {'$in': followed_users}})
     return render_template('index.html', posts=posts)
 
 # Post route
