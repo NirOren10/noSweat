@@ -221,8 +221,10 @@ def message(username):
     if request.method=='POST':
         con = sqlite3.connect("sweat.db")
         db = con.cursor()
-        toid = db.execute("SELECT userid FROM users WHERE username='{}'".format(username)).fetchone()
-        fromid = 
+        toid = db.execute("SELECT userid FROM users WHERE name='{}'".format(username)).fetchone()
+        fromid = session['user_id']
+        print(fromid)
+        print(session)
         return redirect('/')
 
 
