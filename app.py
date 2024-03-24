@@ -197,8 +197,9 @@ def index():
                 "postid": row[0],
                 "userid": row[1],
                 "content": row[2],
-                "details": row[3],
-                "gym": row[4]
+                "details": json.loads(row[3]),
+                "gym": row[4],
+                "user_name" : [i for i in users if i['userid'] == row[1]][0]['name']
                 }
             posts.append(posts_dict)
         
@@ -214,6 +215,18 @@ def index():
         return render_template("index.html",posts=relevant_posts)
     else:
         return render_template("index.html",posts=relevant_posts)
+    
+@app.route("/message/<username>",methods=['POST'])
+def message(username):
+    if request.method=='POST':
+        con = sqlite3.connect("sweat.db")
+        db = con.cursor()
+        toid = db.execute("SELECT userid FROM users WHERE name='{}'".format(username)).fetchone()
+        fromid = session['user_id']
+        print(fromid)
+        print(session)
+        return redirect('/')
+
 
 if __name__ == "__main__":
     app.run()

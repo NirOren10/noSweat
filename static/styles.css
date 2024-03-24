@@ -1,0 +1,14 @@
+div.feed{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left:10px;
+    padding-right:10px;
+}
+.table-td{
+    background-color: lightgrey;
+    color: darkred;
+}
+.post-body{
+    background-color: grey;
+}

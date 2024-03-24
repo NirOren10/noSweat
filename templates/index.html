@@ -4,19 +4,37 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/styles.css">
     <title>Home</title>
 </head>
 <body>
     <h1>Welcome to the Home Page</h1>
-    
-    <div>
-        {% for post in posts %}
-        <div>
-            {{post}}
-        </div>
-        {% endfor %}
-    </div>
-    
     <a href="{{ url_for('logout') }}">Logout</a>
+    
+    <div class="feed">
+        <table>
+        {% for post in posts %}
+        <tr>
+            <td style="border: solid 2px black">
+                <table>
+                    <tr><td class="table-td"><p>{{post.user_name}}</p></td></tr>
+                    <tr><td class="table-td">
+                        <p>Activity: {{post.content}}</p>
+                        <p>Reps/Distance: {{post.details['reps']}}</p>
+                        <p>Additional Comments: {{post.details['comments']}}</p>
+                        <form method="post" action="/message/{{post.user_name}}">
+                            <input type="text" placeholder="Write {{post.user_name}} a message" size="50" width="5" name="message">
+                            <button type="submit" value="send">Send Message</button>
+                        </form>
+                    </td></tr>
+                    
+                </table>
+
+
+            </td>
+        <tr>
+        {% endfor %}
+        <table>
+    </div>
 </body>
 </html>
