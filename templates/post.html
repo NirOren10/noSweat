@@ -1,16 +1,16 @@
 <DOCTYPE html>
     <html>
 <head>
-    <meta charset="utf-11">
+    <meta charset="utf-8">
     <title>Login</title>
         <style>
             .center {
                 text-align: center;
-                color: #333333;
+                color: black;
                 font-family: verdana;
                 background-color:#fd8967;
-                padding: 26px;
-                font-size: 26px;
+                padding: 40px;
+                font-size: 40px;
             }
         </style>
 </head>
@@ -22,15 +22,13 @@
       </style>
     <h1 class = "center">New Post</h1>
     <form method="post" action="/post">
-        <div style = "text-align:center"><input type="text" placeholder="Post Title" name="title"></div>
+        <div style = "text-align:center"><input type="test" placeholder="Workout Name" name ='wrkt_name' required></div>
         <p></p>
-        <div style = "text-align:center"><input type="test" placeholder="Workout Name" name ='wrkt_name'></div>
+        <div style = "text-align:center"><input type="text" placeholder="Reps/Distance" name ='reps' required></div>
         <p></p>
-        <div style = "text-align:center"><input type="text" placeholder="Reps/Distance" name ='reps'></div>
+        <div style = "text-align:center"><input type="text" placeholder="Comments" name ='comments' required></div>
         <p></p>
-        <div style = "text-align:center"><input type="text" placeholder="Comments" name ='comments'></div>
-        <p></p>
-        <input type="submit" value='Post' id="Post">
+        <div style = "text-align:center"><input type="submit" value='Post' id="Post">
 
     </form>
 </body>
