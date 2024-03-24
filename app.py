@@ -215,6 +215,16 @@ def index():
         return render_template("index.html",posts=relevant_posts)
     else:
         return render_template("index.html",posts=relevant_posts)
+    
+@app.route("/message/<username>",methods=['POST'])
+def message(username):
+    if request.method=='POST':
+        con = sqlite3.connect("sweat.db")
+        db = con.cursor()
+        toid = db.execute("SELECT userid FROM users WHERE username='{}'".format(username)).fetchone()
+        fromid = 
+        return redirect('/')
+
 
 if __name__ == "__main__":
     app.run()
