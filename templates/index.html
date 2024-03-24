@@ -8,6 +8,11 @@
 </head>
 <body>
     <style>
+        div.feed{
+            display: flex;
+            padding-left:10px;
+            padding-right:10px;
+        }
         .table-td{
             background-color: lightgrey;
             color: darkred;
@@ -18,7 +23,7 @@
     </style>
     <h1>Welcome to the Home Page</h1>
     
-    <div>
+    <div class="feed">
         <table>
         {% for post in posts %}
         <tr>
@@ -40,7 +45,7 @@
         {% endfor %}
         <table>
     </div>
-    
+    <div><p></p></div>
     <a href="{{ url_for('logout') }}">Logout</a>
 </body>
 </html>
